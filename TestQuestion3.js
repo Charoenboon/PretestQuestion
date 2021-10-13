@@ -1,11 +1,13 @@
 var arg = process.argv.slice(2);
 
+const htmlparser2 = require("htmlparser2");
 const axios = require('axios').default;
-// const cheerio = require('cheerio');
+const cheerio = require('cheerio');
 const fs = require('fs');
 const got = require('got');
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
+const parse = require('html-dom-parser');
 
 var DomParser = require('dom-parser');
 var parser = new DomParser();
@@ -21,63 +23,37 @@ async function testGetResult() {
     headers: {
       Cookie: 'hasCookie=true',
       Referer: 'https://codequiz.azurewebsites.net/',
-      Connection:'keep-alive'
+      Connection: 'keep-alive'
     }
   })
     .then(function (response) {
-      console.log(response.data);
-      // let doc = new DOMParser().parseFromString(response.data);
-      var dom = parser.parseFromString(response.data);
-      console.log(dom.getElementsByTagName('title').textContent);
-      // const dom = new JSDOM(response.data);
-      // console.log(dom.window.document.getElementsByTagName('table').textContent);
+      var dom = parse(response.data);
+      var first   = dom[1].lastChild.lastChild.previousSibling.firstChild.nextSibling.firstChild.nextSibling.firstChild.data;
+      var second  = dom[1].lastChild.lastChild.previousSibling.firstChild.nextSibling.nextSibling.firstChild.nextSibling.nextSibling.firstChild.data;
+      var third   = dom[1].lastChild.lastChild.previousSibling.firstChild.nextSibling.nextSibling.nextSibling.firstChild.nextSibling.nextSibling.firstChild.data;
+      var forth   = dom[1].lastChild.lastChild.previousSibling.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.firstChild.nextSibling.nextSibling.firstChild.data;
+      // console.log(first,second,third,forth);
 
-      // const $ = cheerio.load(response.data);
-      // Print the text nodes of the <table> in the HTML
-      // console.log($("table").text());
-      // $.html();
-      // $.root().html();
+      switch (arg[0]) {
+        case "FUNDCODE":
+          console.log(first);
+          console.log(second);
+          console.log(third);
+          console.log(forth);
+          break;
+        case "B-INCOMESSF":
+          console.log(first);
+          break;
+        case "BM70SSF":
+          console.log(second);
+          break;
+        case "BEQSSF":
+          console.log(third);
+          break;
+        case "B-FUTURESSF":
+          console.log(forth);
+          break;
+      }
     });
 }
 testGetResult();
-
-
-
-// const vgmUrl= 'https://www.vgmusic.com/music/console/nintendo/nes';
-
-// got(URL_TO_PARSE).then(response => {
-//   const dom = new JSDOM(response.body);
-//   console.log(dom.window.document.querySelector('table').textContent);
-// }).catch(err => {
-//   console.log(err);
-// });
-
-//   request(URL_TO_PARSE, (err, response, body) => {
-//     if (err) throw new Error("Something went wrong");
-//     // Load the HTML into cheerio's DOM
-//     const $ = cheerio.load(body);
-//     // Print the text nodes of the <table> in the HTML
-//     console.log($("table").text());
-// });
-
-
-switch (arg[0]) {
-  case "FUNCODE":
-    // console.log("10.0548");
-    // console.log("9.9774");
-    // console.log("11.247");
-    // console.log("11.443");
-    break;
-  case "B-INCOMESSF":
-    // console.log("10.0548");
-    break;
-  case "BM70SSF":
-    // console.log("9.9774");
-    break;
-  case "BEQSSF":
-    // console.log("11.247");
-    break;
-  case "B-FUTURESSF":
-    // console.log("11.443");
-    break;
-}
