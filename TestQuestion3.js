@@ -7,6 +7,9 @@ const got = require('got');
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
+var DomParser = require('dom-parser');
+var parser = new DomParser();
+
 const URL_TO_PARSE = "https://codequiz.azurewebsites.net/";
 
 axios.defaults.withCredentials = true
@@ -22,6 +25,10 @@ async function testGetResult() {
     }
   })
     .then(function (response) {
+      console.log(response.data);
+      // let doc = new DOMParser().parseFromString(response.data);
+      var dom = parser.parseFromString(response.data);
+      console.log(dom.getElementsByTagName('title').textContent);
       // const dom = new JSDOM(response.data);
       // console.log(dom.window.document.getElementsByTagName('table').textContent);
 
@@ -34,14 +41,16 @@ async function testGetResult() {
 }
 testGetResult();
 
-const vgmUrl= 'https://www.vgmusic.com/music/console/nintendo/nes';
 
-got(vgmUrl).then(response => {
-  const dom = new JSDOM(response.body);
-  console.log(dom.window.document.querySelector('title').textContent);
-}).catch(err => {
-  console.log(err);
-});
+
+// const vgmUrl= 'https://www.vgmusic.com/music/console/nintendo/nes';
+
+// got(URL_TO_PARSE).then(response => {
+//   const dom = new JSDOM(response.body);
+//   console.log(dom.window.document.querySelector('table').textContent);
+// }).catch(err => {
+//   console.log(err);
+// });
 
 //   request(URL_TO_PARSE, (err, response, body) => {
 //     if (err) throw new Error("Something went wrong");
